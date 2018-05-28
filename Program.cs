@@ -11,7 +11,9 @@ namespace bisquick
       //var bq = BigQueryClient.Create("yoshi-team");
       var gh = new GitHub();
       var user = await gh.GetUser();
+      var repos = await gh.GetRepos();
       Console.WriteLine(user.Url);
+      repos.repos.ForEach(i => Console.WriteLine(i.repo));
     }
   }
 }
