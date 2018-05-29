@@ -7,10 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="tableSchema.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Google.Cloud.BigQuery.V2" Version="1.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.0-rc1-final" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.1.0-rc1-final" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.0-rc1-final" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Octokit" Version="0.29.0" />
   </ItemGroup>
 

@@ -1,6 +1,10 @@
+using System;
 using Octokit;
 using System.Collections.Generic;
 using Google.Cloud.BigQuery.V2;
+using Google.Apis.Bigquery.v2.Data;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace bisquick
 {
@@ -13,7 +17,14 @@ namespace bisquick
     }
 
     public void init() {
-      return;
+      var dataset = this.client.GetOrCreateDataset("bisquick");
+      var file = File.OpenText("tableSchema.json");
+      var serializer = new JsonSerializer();
+      var schema = (TableSchema)serializer.Deserialize(file, typeof(TableSchema));
+      var options = new CreateTableOptions {
+        TimePartitioning = TimePartition.CreateDailyPartitioning(expiration: null)
+      };
+      var table = dataset.GetOrCreateTable("issues", schema, null, options);
     }
 
     public void insertIssues(List<Issue> issues)
