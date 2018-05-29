@@ -12,16 +12,17 @@ namespace bisquick
       }
 
       var config = ConfigManager.LoadConfig();
+      var bq = new BigQuery(config.PROJECT_ID);
 
       switch(args[0]) {
         case "init":
-          var bq = new BigQuery(config.PROJECT_ID);
           bq.init();
           Console.WriteLine("Dataset and table created 🎉");
           break;
         case "sync":
           var gh = new GitHub(config.GITHUB_TOKEN);
           var issues = await gh.GetIssues();
+          bq.insertIssues(issues);
           Console.WriteLine($"{issues.Count} Issues synchronized 🥞");
           break;
         default:
