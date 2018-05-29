@@ -10,7 +10,6 @@ namespace bisquick
 {
   public class GitHub
   {
-
     private GitHubClient github;
 
     public GitHub(string token)

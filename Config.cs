@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Configuration;
+using System;
 
 namespace bisquick
 {
@@ -6,11 +6,10 @@ namespace bisquick
   {
     public static Config LoadConfig()
     {
-      var config = new ConfigurationBuilder()
-              .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-              .AddEnvironmentVariables()
-              .Build();
-      return config as Config;
+      var config = new Config();
+      config.GITHUB_TOKEN = Environment.GetEnvironmentVariable("BISQUICK_GITHUB_TOKEN");
+      config.PROJECT_ID = Environment.GetEnvironmentVariable("BISQUICK_PROJECT_ID");
+      return config;
     }
   }
 
