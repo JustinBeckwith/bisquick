@@ -4,14 +4,37 @@ using System;
 using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace bisquick {
   public class GitHub {
-    public async Task<User> GetUser() {
-      var github = new GitHubClient(new ProductHeaderValue("MyAmazingApp"));
-      var user = await github.User.Get("half-ogre");
-      Console.WriteLine(user.Followers + " folks love the half ogre!");
-      return user;
+
+    private GitHubClient github;
+
+    public GitHub() {
+      this.github = new GitHubClient(new ProductHeaderValue("bisquick"));
+      var token = Environment.GetEnvironmentVariable("SLOTH_GITHUB_TOKEN");
+      if (!string.IsNullOrEmpty(token)) {
+        this.github.Credentials = new Credentials(token);
+      } else {
+        Console.WriteLine("WARNING: No GitHub auth token is set.  Please set the `SLOTH_GITHUB_TOKEN` environment variable to avoid rate limiting by the GitHub API.");
+      }
+    }
+
+    public async Task<List<Issue>> GetIssues() {
+      var repos = await this.GetRepos();
+      var tasks = new List<Task<IReadOnlyList<Issue>>>();
+      var opts = new ApiOptions();
+      opts.PageSize = 100;
+      foreach (var repo in repos.repos)
+      {
+        var parts = repo.repo.Split('/');
+        var t = github.Issue.GetAllForRepository(parts[0], parts[1],  opts);
+        tasks.Add(t);
+      }
+      var results = await Task.WhenAll(tasks);
+      var issues = results.SelectMany(x => x).ToList();
+      return issues;
     }
 
     public async Task<Repos> GetRepos() {
